@@ -21,5 +21,5 @@ Upload wce.exe to victim
     WCE v1.41beta (Windows Credentials Editor) - (c) 2010-2013 Amplia Security -     by Hernan Ochoa (hernan@ampliasecurity.com)
     Use -h for help.
 
-    Administrator\RALPH:*<password>*
+    Administrator\RALPH:<password>
     RALPH$\THINC.LOCAL:
