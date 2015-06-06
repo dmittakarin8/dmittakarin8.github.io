@@ -1,5 +1,7 @@
 ---
-published: false
+published: true
+layout: post
+title: WCE post exploitation
 ---
 
 
